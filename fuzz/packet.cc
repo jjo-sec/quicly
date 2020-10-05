@@ -11,12 +11,13 @@ extern "C" int LLVMFuzzerTestOneInput(const uint8_t *Data, size_t Size)
 	int ret;
 	quicly_context_t ctx;
 	quicly_decoded_packet_t p;
+    size_t off = 0;
 
 	ctx = quicly_spec_context;
 
-	ret = quicly_decode_packet(&ctx, &p, Data, Size);
+	ret = quicly_decode_packet(&ctx, &p, Data, Size, &off);
 
-	if (ret != Size)
+	if (ret == SIZE_MAX || Size != off)
 		return 0;
 	const uint8_t *src = p.octets.base, *end = src + p.octets.len;
 	if (p.octets.len == 0)
